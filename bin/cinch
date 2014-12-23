@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby2.1
+
+require 'clik'
+require 'cinch'
+
+cli 'add' => Cinch.method(:add),
+    'hash' => -> Cinch.method(:hash),
+    'init' => Cinch.method(:init)
