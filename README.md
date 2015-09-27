@@ -4,7 +4,7 @@ A manager of big files.
 
 From WordNet 3.0 (2006)
 
-> **cinch** 
+> **cinch**
 >
 > - **noun** any undertaking that is easy to do
 > - **verb** make sure of
