@@ -1,25 +1,26 @@
 # Cinch
 
-A manager of big files.
+A manager of large files.
 
 From WordNet 3.0 (2006)
 
 > **cinch**
 >
 > - **noun** any undertaking that is easy to do
-> - **verb** make sure of
 
 ## Status
 
-WIP. Not functional.
+Ceased.
 
-## Installation
+Currently only `sha256.go` works.
+It reads from `stdin` and output a pointer file compatible with `git-lfs`.
+You can use it with git's filter for large files.
 
-TODO: Work in progress.
+You may have interests in the following projects:
 
-## Usage
-
-TODO: Write usage instructions here
+- git-annex
+- [shatag](https://bitbucket.org/maugier/shatag)
+- [shattr](https://github.com/weakish/shattr)
 
 ## Contributing
 
