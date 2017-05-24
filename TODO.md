@@ -70,28 +70,28 @@ Cons:
 2. Still a huge number of files.
     I have 1338211 (and growing).
 
-### Option 3
+### Choice 3
 
-Option 1 + separated repositories for videos, audios, books etc.
+Choice 1 + separated repositories for videos, audios, books etc.
 
 Pros:
 
-1. Same as Option 1.
+1. Same as Choice 1.
 
 Cons:
 
-1. Same as Option 1, except file numbers.
+1. Same as Choice 1, except file numbers.
 2. Inter-repository operation is difficult to handle.
 
-### Option 4
+### Choice 4
 
-Option 2 + separated repositories.
+Choice 2 + separated repositories.
 
 Cons:
 
-Refer to Option 2 and Option 3.
+Refer to Choice 2 and Choice 3.
 
-### Option 5
+### Choice 5
 
 Use one big text file (e.g. csv) to record all meta data, sorted by `sha256`.
 
@@ -103,15 +103,15 @@ Cons:
 
 `mv` etc won't work.
 
-### Option 6
+### Choice 6
 
-Option 5 + separated text files.
+Choice 5 + separated text files.
 
 Cons:
 
-Refer to Option 2 and Option 3.
+Refer to Choice 2 and Choice 3.
 
-### Option 7
+### Choice 7
 
 Without git, use Java  object persistence, like [Prevayler][].
 
@@ -144,7 +144,7 @@ Third, I choose separated files/repos, because:
     For example, an album cover image in both the `image` set and the `music` set.
     If they are counted as duplication, and, say, the copy in `music` set is removed,
     then the cover is missing in the music directory
-    (e.g. a music playre cannot diplay it),
+    (e.g. a music player cannot display it),
     even though the file still exists in `image` set.
     Also, linking the cover image in `music` set to the file in `image` set may not be useful,
     because `music` and `image` set may be on different external disks
@@ -160,7 +160,6 @@ Last, I choose json as the file format:
 
 - CSV is bad at nested structure, e.g. `paths` need to be an array, how to map it to CSV?
 - Ceylon has `ceylon.json` in its standard libraries.
-Commands:
 
 ### Conclusion
 
@@ -191,7 +190,7 @@ cinch-repo
 ```
 
 
-## CliO UI
+## Cli UI
 
 ```
 cinch init
