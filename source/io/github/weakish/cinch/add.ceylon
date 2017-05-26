@@ -174,7 +174,10 @@ Boolean is_ignored(File file) {
 }
 
 String relative_path(File file, String branch) {
-    String[] path_elements = file.path.absolutePath.elements;
+    // `.absolutePath.normalizedPath` is equvilent to Java's `getAbsolutePath()`:
+    // redundant names such as "." and ".." are removed from the pathname,
+    // and symbolic links are resolved.
+    String[] path_elements = file.path.absolutePath.normalizedPath.elements;
     assert (nonempty path_elements);
     switch (path_length = path_elements.size)
     case (1|2) {
