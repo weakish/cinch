@@ -174,20 +174,31 @@ cinch-repo
 
 #### JSON schema
 
-```json
+```
 {
-    { "SHA256-hash_of_file": {
+    "SHA256-hash_of_file": {
             size: Integer,
             lastModificationTime: Integer,
-            [
-                "external-drive-name_or_remote-host-name": "relative/path/to/mountpoint",
+            branches: 
+            {
+                "external-drive-name_or_remote-host-name": ["relative/path/to/mountpoint"],
                 ...
-            ]
-        }
-    },
+            },
+            urls: ["http://example.com/path/to/file", "ssh://example.com/path/to/file", ...]
+    }
     ...
 }
 ```
+
+branches.json
+
+```
+{
+  branch_name: "semitrusted"|"untrusted"|"trusted"|"dead",
+  ...
+}
+```
+
 
 
 ## Cli UI
@@ -196,9 +207,12 @@ cinch-repo
 cinch init
 cinch add [files ...] (first, after edit)
 cinch mv
-cinch drop path/to/filename (mark removed only)
-cinch rm path/to/filename (true rm)
+cinch rm path/to/filename
+cinch drop path/to/filename (rm file, and mark other copies as "to remove")
+cinch drop -b branch path/to/filename (like above but only for one branch)
+cinch gc (remove available copies marked as "to remove") 
 cinch ls
+cinch locate
 cinch find
 cinch status (not added/removed files)
 cinch whereis path/to/filename | sha256
