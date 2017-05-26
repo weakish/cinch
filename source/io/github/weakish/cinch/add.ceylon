@@ -214,9 +214,7 @@ String relative_path(File file, String branch) {
 }
 
 void add_file(File file, JsonObject db, String branch) {
-    if (is_ignored(file)) {
-        // pass
-    } else {
+    if (!is_ignored(file)) {
         String file_path = relative_path(file, branch);
         switch (result = get_sha256(file))
         case (is String) {
