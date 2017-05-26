@@ -51,14 +51,12 @@ test void successfully_read_sha256_from_file() {
     assertEquals(parse_sha256_file(signature), sha256);
     assertEquals(read_sha256_from_file(file), compute_sha256(file));
     assertEquals(get_sha256(file), sha256);
-    assertEquals(get_sha256(signature),
-                 "f7e854c93f8460e906561b0a3e695131a1ec28ffb23d09be048bba7ef3eaaa2e");
 
-    void clean_up() {
-        Files.delete(Paths.get(file.path.string));
-        Files.delete(Paths.get(signature.path.string));
-    }
-    clean_up();
+    Files.delete(Paths.get(signature.path.string));
+    assertEquals(get_sha256(file), sha256);
+
+    // clean up
+    Files.delete(Paths.get(file.path.string));
 }
 
 test void repo_path_echoes_back() {
@@ -74,8 +72,11 @@ test void successfully_create_readme() {
     Resource readme = temporary_directory.childResource("README");
     assert (is File readme);
 
-    Files.delete(Paths.get(readme.path.string));
-    Files.delete(temporary_directory_path);
+    void clean_up() {
+        Files.delete(Paths.get(readme.path.string));
+        Files.delete(temporary_directory_path);
+    }
+    clean_up();
 }
 
 test void successfully_write_config() {
@@ -90,4 +91,9 @@ test void successfully_write_config() {
     try (reader = config.Reader()) {
         assertEquals(reader.readLine(), "repo=/path/to/repo");
     }
+    void clean_up() {
+        Files.delete(Paths.get(config.string));
+        Files.delete(temporary_directory_path);
+    }
+    clean_up();
 }
