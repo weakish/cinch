@@ -10,4 +10,5 @@ native("jvm") module io.github.weakish.cinch "0.0.0" {
     import maven:com.google.guava:"guava" "22.0";
     import maven:"commons-cli":"commons-cli" "1.4";
     import maven:org.apache.commons:"commons-csv" "1.3";
+    import maven:com.google.code.gson:"gson" "2.8.0";
 }
