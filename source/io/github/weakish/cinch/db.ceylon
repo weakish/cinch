@@ -89,7 +89,7 @@ void update_record(Integer file_size, JsonObject record, String branch, String f
             }
         }
         case (is Null) {
-            record.put(branch, JsonArray({file_path}));
+            branches.put(branch, JsonArray({file_path}));
         }
     } else {
         throw FileSizeMismatchException(file_path);
