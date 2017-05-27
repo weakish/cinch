@@ -12,7 +12,6 @@ import ceylon.file {
     Resource,
     Path,
     Nil,
-    home,
     Directory
 }
 import java.nio.file {
@@ -20,6 +19,7 @@ import java.nio.file {
     Paths,
     JPath=Path
 }
+
 
 test void xattr_is_enabled() {
     assertTrue(is_xattr_enabled());
@@ -57,10 +57,6 @@ test void successfully_read_sha256_from_file() {
 
     // clean up
     Files.delete(Paths.get(file.path.string));
-}
-
-test void repo_path_echoes_back() {
-    assertEquals(repo_path(home.string), home);
 }
 
 test void successfully_create_readme() {

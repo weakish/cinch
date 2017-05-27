@@ -1,7 +1,3 @@
-import ceylon.process {
-    Process,
-    createProcess
-}
 import ceylon.json {
     JsonObject
 }
@@ -12,144 +8,28 @@ import java.io {
     IOException
 }
 import ceylon.file {
-    current,
     Path,
     File,
-    Reader,
-    Link,
-    parsePath,
     Nil,
     Directory,
     Visitor
 }
 import io.github.weakish.sysexits {
     ConfigurationError,
-    NotImplementedYetException,
-    CommandLineUsageError,
-    InternalSoftwareError
-}
-Directory get_repo() {
-    if (process.namedArgumentPresent("d")) {
-        switch (repo = process.namedArgumentValue("d"))
-        case (is String) {
-            return resolve_directory(repo);
-        }
-        case (is Null) {
-            throw CommandLineUsageError("Please supply the directory path for `-d`.");
-        }
-    } else {
-        switch (repo = read_config())
-        case (is String) {
-            return resolve_directory(repo);
-        }
-        case (is Null) {
-            throw CommandLineUsageError(
-                "Cannot find repo!
-                 Supply it via `-d <path>` or run `cinch init <path>` before hand."
-            );
-        }
-    }
+    CommandLineUsageError
 }
 
-File get_db() {
-    String name;
-    if (process.namedArgumentPresent("n")) {
-        switch (n = process.namedArgumentValue("n"))
-        case (is String) {
-            name = n;
-        }
-        case (is Null) {
-            throw CommandLineUsageError("Please supply a value for `-n`.");
-        }
-    } else {
-        name = "Uncategorized";
-    }
 
-    switch (db = get_repo().childResource(name + ".json"))
+File get_db(Directory repository, String category) {
+    switch (db = repository.childResource(category + ".json").linkedResource)
     case (is File) {
         return db;
     }
     case (is Nil) {
         return db.createFile();
     }
-    case (is Directory|Link) {
-        throw ConfigurationError("``name``.json must not be a directory or link.");
-    }
-}
-
-{Path+} to_add_paths() {
-    {Path+} paths;
-
-    if (nonempty arguments = process.arguments.rest) {
-        paths = { for (argument in arguments) parsePath(argument) };
-    } else {
-        paths = { current };
-    }
-
-    return paths;
-}
-
-Directory resolve_directory(String path) {
-    switch (location = parsePath(path).resource)
     case (is Directory) {
-        return location;
-    }
-    case (is Nil|File|Link) {
-        throw ConfigurationError("``path`` directory does not exist!");
-    }
-}
-
-"Try to get hostname via environment virable.
- If failed, get hostname via running `hostname`."
-String get_hostname() {
-    String? enviroment_variable;
-    if (operatingSystem.name == "windows") {
-        enviroment_variable = process.environmentVariableValue("COMPUTERNAME");
-    } else if (["linux", "mac", "unix", "other"].contains(operatingSystem.name)) {
-        // Bash or derivatives sets the HOSTNAME variable.
-        enviroment_variable = process.environmentVariableValue("HOSTNAME");
-    } else {
-        throw NotImplementedYetException(
-            "Support for os ``operatingSystem.name`` is not implemented.");
-    }
-
-    switch (enviroment_variable)
-    case (is String) {
-        return enviroment_variable;
-    }
-    case (is Null) {
-        String host_name;
-        Process process = createProcess("hostname");
-        if (is Reader reader = process.output) {
-            if (is String line = reader.readLine()) {
-                host_name = line;
-            } else {
-                throw InternalSoftwareError("`hostname` has an empty output!");
-            }
-        } else {
-            throw InternalSoftwareError("`hostname` has a wrong output stream!");
-        }
-        switch (exit_code = process.waitForExit())
-        case (0) {
-            return host_name;
-        } else {
-            throw InternalSoftwareError("`hostname` failed with exit code ``exit_code``");
-        }
-    }
-}
-
-"Supplied via `-b` or using hostname."
-String get_branch() {
-    if (process.namedArgumentPresent("b")) {
-        switch (branch = process.environmentVariableValue("b"))
-        case (is String) {
-            return branch;
-        }
-        case (is Null) {
-            throw CommandLineUsageError("Please supply the branch name for `-b`.");
-        }
-    } else {
-        return get_hostname();
+        throw ConfigurationError("``category``.json must not be a directory.");
     }
 }
 
@@ -241,27 +121,23 @@ void add_directory(Directory directory, JsonObject db, String branch) {
 }
 
 void add_path(Path path, JsonObject db, String branch) {
-    switch (file = path.resource)
+    switch (file = path.resource.linkedResource)
     case (is File) {
         add_file(file, db, branch);
     }
     case (is Directory) {
         add_directory(file, db, branch);
     }
-    case (is Link) {
-        process.writeErrorLine("``path`` is a link. Skip it.");
-    }
     case (is Nil) {
         throw CommandLineUsageError("``path`` does not exist!");
     }
 }
 
-void add() {
-    File db_file = get_db();
+void add(Directory repository, String branch, String category, {Path*} paths) {
+    File db_file = get_db(repository, category);
     JsonObject db = import_json(db_file);
-    String branch = get_branch();
 
-    for (path in to_add_paths()) {
+    for (path in paths) {
         add_path(path, db, branch);
     }
     try (writer = db_file.Overwriter()) {

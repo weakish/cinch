@@ -1,7 +1,4 @@
 import ceylon.file {
-    Path,
-    parsePath,
-    current,
     Directory,
     Nil,
     File,
@@ -16,15 +13,6 @@ import io.github.weakish.sysexits {
 }
 import io.github.weakish.xdg {
     XDG
-}
-Path repo_path(String? directory = process.arguments[1]) {
-    switch (directory)
-    case (is String) {
-        return parsePath(directory);
-    }
-    case (is Null) {
-        return current;
-    }
 }
 
 void create_readme(Directory repo) {
@@ -76,22 +64,8 @@ void update_config(Directory repo) {
 }
 
 throws (`class CanNotCreateFileError`, "if repo path points to a link or file")
-void init() {
-    switch (repo = repo_path().resource)
-    case (is Directory) {
-        create_readme(repo);
-        update_config(repo);
-    }
-    case (is Nil) {
-        Directory new_directory = repo.createDirectory();
-        create_readme(new_directory);
-        update_config(new_directory);
-    }
-    case (is File) {
-        throw CanNotCreateFileError("``repo`` already exists but it is not a directory.");
-    }
-    case (is Link) {
-        throw CanNotCreateFileError("``repo`` is a link. Please rerun `cinch init` with its target.");
-    }
+void init(Directory repo) {
+    create_readme(repo);
+    update_config(repo);
 }
 

@@ -81,13 +81,26 @@ String|IOException compute_sha256(File file) {
     return hashCode.string;
 }
 
+void write_to_xattr(String sha256, File file) {
+    write_xattr("shatag.sha256", sha256,file);
+}
+
 String|IOException get_sha256(File file) {
-    if (is String sha256 = read_sha256_from_file(file)) {
-        return sha256;
-    } else if (is String sha256 = read_from_xattr(file)) {
+    if (is String sha256 = read_from_xattr(file)) {
         return sha256;
     } else {
-        return compute_sha256(file);
+        if (is String sha256 = read_sha256_from_file(file)) {
+            write_to_xattr(sha256, file);
+            return sha256;
+        } else {
+            String|IOException result = compute_sha256(file);
+            if (is String result) {
+                write_to_xattr(result, file);
+                return result;
+            } else {
+                return result;
+            }
+        }
     }
 }
 

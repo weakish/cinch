@@ -139,3 +139,8 @@ String? read_xattr(String tag, File file) {
         return null;
     }
 }
+
+void write_xattr(String tag, String val, File file) {
+    UserDefinedFileAttributeView view = get_xattr_view(file);
+    view.write(tag, Charset.defaultCharset().encode(val));
+}
