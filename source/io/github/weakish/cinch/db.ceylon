@@ -64,12 +64,14 @@ JsonObject import_json(File db) {
 }
 
 
-void insert_record(JsonObject db, String sha256, File file, String branch, String file_path) {
+void insert_record(JsonObject db,
+                   String sha256,
+                   Integer size, Integer mtime, String branch, String file_path) {
     db.put {
         sha256;
         JsonObject {
-            "size" -> file.size,
-            "mtime" -> file.lastModifiedMilliseconds,
+            "size" -> size,
+            "mtime" -> mtime,
             "branches" -> JsonObject {
                 branch -> JsonArray({file_path})
             }
@@ -77,8 +79,8 @@ void insert_record(JsonObject db, String sha256, File file, String branch, Strin
     };
 }
 
-void update_record(File file, JsonObject record, String branch, String file_path) {
-    if (file.size == record.getInteger("size")) {
+void update_record(Integer file_size, JsonObject record, String branch, String file_path) {
+    if (file_size == record.getInteger("size")) {
         JsonObject branches = record.getObject("branches");
         switch (paths = branches.getArrayOrNull(branch))
         case (is JsonArray) {
@@ -90,7 +92,7 @@ void update_record(File file, JsonObject record, String branch, String file_path
             record.put(branch, JsonArray({file_path}));
         }
     } else {
-        throw FileSizeMismatchException(file.path.string);
+        throw FileSizeMismatchException(file_path);
     }
 }
 

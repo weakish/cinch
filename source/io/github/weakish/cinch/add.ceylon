@@ -101,10 +101,13 @@ void add_file(File file, JsonObject db, String branch) {
             String sha256 = result;
             switch (record = db.getObjectOrNull(sha256))
             case (is JsonObject) {
-                update_record(file, record, branch, file_path);
+                update_record(file.size, record, branch, file_path);
             }
             case (is Null) {
-                insert_record(db, sha256, file, branch, file_path);
+                insert_record(db,
+                              sha256,
+                              file.size, file.lastModifiedMilliseconds,
+                              branch, file_path);
             }
         }
         case (is IOException) {
