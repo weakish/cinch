@@ -96,3 +96,8 @@ void update_record(Integer file_size, JsonObject record, String branch, String f
     }
 }
 
+void write_db_file(File db_file, JsonObject db) {
+    try (writer = db_file.Overwriter()) {
+        writer.write(db.string);
+    }
+}

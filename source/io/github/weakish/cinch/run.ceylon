@@ -204,7 +204,7 @@ void import_command(String[] arguments) {
     Option category = Option.builder("n")
         .longOpt("name")
         .hasArg().argName("category")
-        .desc("Specifies category (default: uncategorized).")
+        .desc("Specifies category (default: csv file basename).")
         .build();
     Options options = Options();
     options.addOption(repo);
@@ -226,7 +226,8 @@ void import_command(String[] arguments) {
         String syntax = "cinch import [-d REPO] [-n CATEGORY] <FILE.CSV>\n\n";
         String header =
                 "Import file lists from csv to cinch repository.\n\nOptions:\n";
-        String footer = "\ncsv file format: `hash,size,name,path`";
+        String footer = "\nFirst row of csv file: `hash,size,name,path`\n
+                         Last modification time for imported records will be `-1`";
         HelpFormatter helpFormatter = HelpFormatter();
         helpFormatter.printHelp(
             syntax,
@@ -257,7 +258,13 @@ void import_command(String[] arguments) {
         } else {
             switch (csv_filename = toStringArray(commandLine.args).first)
             case (is String) {
-                category_name = csv_filename.replaceLast(".csv", "");
+                switch (csv_basename = parsePath(csv_filename).elements.last)
+                case (is String) {
+                    category_name = csv_basename.replaceLast(".csv", "");
+                }
+                case (is Null) {
+                    throw CommandLineUsageError("``csv_filename`` is invalid!");
+                }
             }
             case (is Null) {
                 throw CommandLineUsageError("Please specify csv filename to import.");
@@ -295,6 +302,7 @@ void main() {
 
                           init             initialize repository
                           add              add files to repository
+                          import           import csv file lists
                           help             same as `--help`
                           version          same as `--version`
 

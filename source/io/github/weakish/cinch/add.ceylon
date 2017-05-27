@@ -53,11 +53,11 @@ Boolean is_ignored(File file) {
     }
 }
 
-String relative_path(File file, String branch) {
+String relative_path(Path path, String branch) {
     // `.absolutePath.normalizedPath` is equvilent to Java's `getAbsolutePath()`:
     // redundant names such as "." and ".." are removed from the pathname,
     // and symbolic links are resolved.
-    String[] path_elements = file.path.absolutePath.normalizedPath.elements;
+    String[] path_elements = path.absolutePath.normalizedPath.elements;
     assert (nonempty path_elements);
     switch (path_length = path_elements.size)
     case (1|2) {
@@ -95,7 +95,7 @@ String relative_path(File file, String branch) {
 
 void add_file(File file, JsonObject db, String branch) {
     if (!is_ignored(file)) {
-        String file_path = relative_path(file, branch);
+        String file_path = relative_path(file.path, branch);
         switch (result = get_sha256(file))
         case (is String) {
             String sha256 = result;
@@ -136,6 +136,7 @@ void add_path(Path path, JsonObject db, String branch) {
     }
 }
 
+
 void add(Directory repository, String branch, String category, {Path*} paths) {
     File db_file = get_db(repository, category);
     JsonObject db = import_json(db_file);
@@ -143,7 +144,5 @@ void add(Directory repository, String branch, String category, {Path*} paths) {
     for (path in paths) {
         add_path(path, db, branch);
     }
-    try (writer = db_file.Overwriter()) {
-        writer.write(db.string);
-    }
+    write_db_file(db_file, db);
 }
