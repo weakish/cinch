@@ -10,24 +10,21 @@ import java.io {
     FileReader,
     Reader
 }
-import ceylon.json {
-    JsonObject,
-    JsonArray
-}
 import java.util {
     HashMap,
     ArrayList
 }
 import java.lang {
-    JString=String,
-    Long
+    JString=String
 }
 import java.lang.reflect {
     Type
 }
 import com.google.gson {
     Gson,
-    GsonBuilder
+    GsonBuilder,
+    JsonIOException,
+    JsonSyntaxException
 }
 import com.google.gson.reflect {
     TypeToken
@@ -37,142 +34,94 @@ import ceylon.interop.java {
 }
 
 // `ArrayList<String>` in Java for serizilation with gson.
-alias Paths => ArrayList<JString>;
+alias Values => ArrayList<JString>;
+
+alias Infos => HashMap<JString,Values>;
+alias Details => HashMap<JString, Infos>;
 
 // `HashMap` in `ceylon.collection` has performance issues:
 // adding hundreds of thousands records to it will cause
 // `java.lang.OutOfMemoryError` (GC overhead limit exceeded).
 // Thus `HashMap` from `java.util` is used instead.
-alias Branches => HashMap<String, Paths>;
+alias Records => HashMap<JString, Details>;
 
-// Uses `Long` instead of `Integer` for serizilation with gson.
-// `Integer` would be converted to `{"value": number}`.
-alias Details => HashMap<String, Long|Branches>;
-
-alias Records => HashMap<String, Details>;
-
-throws (`class ParseException`)
-Records db_to_map(JsonObject db) {
-    variable Integer size;
-    variable Integer mtime;
-    variable Paths paths = ArrayList<JString>();
-    variable Branches branches = HashMap<String, Paths>();
-    variable Details details = HashMap<String, Long|Branches>();
-    Records records = HashMap<String, Details>();
-
-    for (k->v in db) {
-        switch (v)
-        case (is JsonObject) {
-            size = v.getInteger("size");
-            mtime = v.getInteger("mtime");
-
-            for (branch->file_paths in v.getObject("branches")){
-                switch (file_paths)
-                case (is JsonArray) {
-                    for (path in file_paths) {
-                        switch (path)
-                        case (is String) {
-                            paths.add(javaString(path));
-                        }
-                        else {
-                            throw ParseException("Failed to parse ``k``->``v``");
-                        }
-                    }
-                    branches[branch] = paths;
-                }
-                else {
-                    throw ParseException("Failed to parse ``k``->``v``");
-                }
-            }
-
-            details["size"] = Long(size);
-            details["mtime"] = Long(mtime);
-            details["branches"] = branches;
-
-            records[k] = details;
-        }
-        else {
-            throw ParseException("Failed to parse ``k``->``v else "null"``");
-        }
-    }
-    return records;
-}
-
-throws (`class ParseException`)
+throws (
+    `class ParseException`,
+    "when failed to parse CSV file or json records"
+)
+throws (
+    `class JsonIOException`,
+    "if there was a problem reading from the Reader"
+)
+throws (
+    `class JsonSyntaxException`,
+    "if json is not a valid representation for an object of type"
+)
 void import_csv(Directory repository, String category, File csv) {
+    object typeToken extends TypeToken<Records>() {}
+    Type records_type = typeToken.type;
+
     File db_file = get_db(repository, category);
-    JsonObject db = import_json(db_file);
-    Records records = db_to_map(db);
+    Reader json_file_reader = FileReader(db_file.path.string);
+    Gson gson_reader = Gson();
+    Records records = gson_reader.fromJson<Records>(
+        json_file_reader, records_type
+    ) else HashMap<JString, Details>();
 
     Reader input = FileReader(csv.path.string);
     value csv_records = CSVFormat.rfc4180.withFirstRecordAsHeader().parse(input);
 
     for (csv_record in csv_records) {
-        String hash = csv_record.get("hash");
-        Integer|ParseException size = Integer.parse(csv_record.get("size"));
-        String branch = csv_record.get("name");
+        JString hash = javaString(csv_record.get("hash"));
+        JString size = javaString(csv_record.get("size"));
+        JString branch = javaString(csv_record.get("name"));
         JString path = javaString(
             relative_path(parsePath(csv_record.get("path")),
-                branch)
+                branch.string)
         );
 
-        switch (size)
-        case (is Integer) {
-            switch (details = records[hash])
-            case (is Details) {
-                switch (recorded = details["size"])
-                case (is Long) {
-                    if (Long(size) == recorded) {
-                        switch (branches = details["branches"])
-                        case (is Branches) {
-                            switch (file_paths = branches[branch])
-                            case (is Paths) {
-                                if (!file_paths.contains(path)) {
-                                    file_paths.add(path);
-                                }
-                            }
-                            case (is Null) {
-                                Paths paths = ArrayList<JString>();
-                                paths.add(path);
-                                Branches file_branches = HashMap<String,Paths>();
-                                file_branches[branch] = paths;
-                                details["branches"] = file_branches;
-                            }
-                        }
-                        case (is Null|Long) {
-                            throw ParseException("branches of ``hash``");
-                        }
-                    } else {
-                        process.writeErrorLine(
-                            "SizeMismatch: ``hash`` ``path`` has size ``size``,
-                             while recorded size is ``recorded``");
+        if (exists details = records[hash]) {
+            if (exists branches = details[javaString("branches")]) {
+                if (exists paths = branches[branch]) {
+                    if (!paths.contains(path)) {
+                        paths.add(path);
                     }
+                } else {
+                    Values paths = ArrayList<JString>();
+                    paths.add(path);
+                    branches[branch] = paths;
+                    details[javaString("branches")] = branches;
                 }
-                case (is Null|Branches) {
-                    throw ParseException("size of ``hash``");
-                }
-            }
-            case (is Null) {
-                Details file_details = HashMap<String,Long|Branches>();
-                file_details["size"] =Long(size);
-                file_details["mtime"] =Long(-1);
-                Paths paths = ArrayList<JString>();
-                paths.add(path);
-                Branches file_branches = HashMap<String,Paths>();
-                file_branches[branch] = paths;
-                file_details["branches"] = file_branches;
-                records[hash] = file_details;
+            } else {
+                throw ParseException("branches of ``hash``");
             }
         }
-        case (is ParseException) {
-            throw ParseException("Error on processing ``csv_record``.");
+        else {
+            Details details = HashMap<JString,Infos>();
+
+            Values size_values = ArrayList<JString>();
+            size_values.add(size);
+            Infos size_record = HashMap<JString, Values>();
+            size_record[javaString("Integer")] = size_values;
+            details[javaString("size")] = size_record;
+
+            Values mtime_values = ArrayList<JString>();
+            mtime_values.add(javaString("-1"));
+            Infos mtime_record = HashMap<JString, Values>();
+            mtime_record[javaString("Integer")] = mtime_values;
+            details[javaString("mtime")] = mtime_record;
+
+            Values paths = ArrayList<JString>();
+            paths.add(path);
+            Infos file_branches = HashMap<JString,Values>();
+            file_branches[branch] = paths;
+            details[javaString("branches")] = file_branches;
+            records[hash] = details;
         }
     }
 
-    object typeToken extends TypeToken<Records>() {}
-    Type records_type = typeToken.type;
-    Gson gson = GsonBuilder().setPrettyPrinting().create();
-    String json_out_put = gson.toJson(records, records_type);
+    Gson gson_writer = GsonBuilder().setPrettyPrinting().create();
+    String json_out_put = gson_writer.toJson(records, records_type);
 
     try (writer = db_file.Overwriter()) {
         writer.write(json_out_put);

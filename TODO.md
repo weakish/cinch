@@ -177,14 +177,20 @@ cinch-repo
 ```
 {
     "SHA256-hash_of_file": {
-            size: Integer,
-            lastModificationTime: Integer,
-            branches: 
-            {
+            "size": {
+                "Integer": ["number"]
+            },
+            "mtime": {
+                "Integer": ["millionseconds"]
+            },
+            "branches": {
                 "external-drive-name_or_remote-host-name": ["relative/path/to/mountpoint"],
                 ...
             },
-            urls: ["http://example.com/path/to/file", "ssh://example.com/path/to/file", ...]
+            "urls": {
+                "site": ["http://example.com/path/to/file"],
+                "host": ["ssh://example.com/path/to/file"], ...
+            }
     }
     ...
 }
