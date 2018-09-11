@@ -52,22 +52,15 @@ func addFile(db Files) filepath.WalkFunc {
 				var sha256sum string
 				var size int64
 
-				var checksumFile string = filePath + ".sha256"
-				// Most filesystems have a 255 filename length limit.
-				// len(".sha256") = 7
-				if baseName := path.Base(filePath); len(baseName) + 7 > 255 {
-					sha256sum, size = getSha256AndSize(filePath, info)
-				} else if len(checksumFile) > 4096 { // Linux path length limit
-					sha256sum, size = getSha256AndSize(filePath, info)
-				} else if _, err := os.Stat(checksumFile); os.IsNotExist(err) {
-					sha256sum, size = getSha256AndSize(filePath, info)
-				} else {
+				if checkSumFile := filePath + ".sha256"; doesCheckSumFileExist(filePath) {
 					var content []byte
-					content, err := ioutil.ReadFile(checksumFile)
+					content, err := ioutil.ReadFile(checkSumFile)
 					goaround.LogIf(err)
 					var split []string = strings.Split(string(content), " ")
 					sha256sum = goaround.GetString(split, 1)
 					size = info.Size()
+				} else {
+					sha256sum, size = getSha256AndSize(filePath, info)
 				}
 
 				var file File
@@ -87,6 +80,31 @@ func addFile(db Files) filepath.WalkFunc {
 				return nil
 			}
 		}
+	}
+}
+
+func doesCheckSumFileExist(filePath string) bool {
+	if canCheckSumFileExist(filePath) {
+		var checksumFile string = filePath + ".sha256"
+		if _, err := os.Stat(checksumFile); os.IsNotExist(err) {
+			return false
+		} else {
+			return true
+		}
+	} else {
+		return false
+	}
+}
+
+func canCheckSumFileExist(filePath string) bool {
+	// Most filesystems have a 255 filename length limit.
+	// len(".sha256") = 7
+	if baseName := path.Base(filePath); len(baseName) + 7 > 255 {
+		return false
+	} else if checksumFile := filePath + ".sha256"; len(checksumFile) > 4096 { // Linux path length limit
+		return false
+	} else {
+		return true
 	}
 }
 
