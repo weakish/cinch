@@ -56,11 +56,11 @@ func addFile(db Files) filepath.WalkFunc {
 				// Most filesystems have a 255 filename length limit.
 				// len(".sha256") = 7
 				if baseName := path.Base(filePath); len(baseName) + 7 > 255 {
-					sha256sum, size = GetSha256AndSize(filePath, info)
+					sha256sum, size = getSha256AndSize(filePath, info)
 				} else if len(checksumFile) > 4096 { // Linux path length limit
-					sha256sum, size = GetSha256AndSize(filePath, info)
+					sha256sum, size = getSha256AndSize(filePath, info)
 				} else if _, err := os.Stat(checksumFile); os.IsNotExist(err) {
-					sha256sum, size = GetSha256AndSize(filePath, info)
+					sha256sum, size = getSha256AndSize(filePath, info)
 				} else {
 					var content []byte
 					content, err := ioutil.ReadFile(checksumFile)
@@ -90,7 +90,7 @@ func addFile(db Files) filepath.WalkFunc {
 	}
 }
 
-func GetSha256AndSize(path string, info os.FileInfo) (sha256sum string, size int64) {
+func getSha256AndSize(path string, info os.FileInfo) (sha256sum string, size int64) {
 	goaround.RequireNonNull(info)
 	var attrName string = "user.shatag.sha256"
 	var dest []byte = make([]byte, 64) // sha256 is 64 bytes (256 bits)
