@@ -1,18 +1,18 @@
 package main
 
 import (
-	"path/filepath"
-	"os"
-	"github.com/weakish/goaround"
-	"log"
-	"io/ioutil"
-	"strings"
 	"crypto/sha256"
+	"encoding/hex"
+	"github.com/weakish/goaround"
+	"golang.org/x/sys/unix"
 	"hash"
 	"io"
-	"encoding/hex"
-	"golang.org/x/sys/unix"
+	"io/ioutil"
+	"log"
+	"os"
 	"path"
+	"path/filepath"
+	"strings"
 )
 
 func addDirectory(path string, db Files) {

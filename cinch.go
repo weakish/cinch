@@ -1,10 +1,9 @@
 package main
 
 import (
-	"os"
 	"fmt"
+	"os"
 )
-
 
 func main() {
 	var arguments []string = os.Args[1:]

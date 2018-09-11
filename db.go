@@ -2,8 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"github.com/weakish/goaround"
+	"io/ioutil"
 	"os"
 )
 

@@ -1,12 +1,12 @@
 package main
 
 import (
-	"os"
 	"encoding/csv"
+	"github.com/weakish/goaround"
 	"io"
 	"log"
+	"os"
 	"strconv"
-	"github.com/weakish/goaround"
 )
 
 func importCsv(path string, db Files) {
