@@ -28,7 +28,7 @@ func main() {
 		}
 	}
 }
-
 func usage() {
-	fmt.Println("cinch import <path.csv>")
+	fmt.Println("cinch import file.csv")
+	fmt.Println("cinch add directory")
 }
