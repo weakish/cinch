@@ -16,6 +16,7 @@ import (
 )
 
 func addDirectory(path string, db Files) {
+	goaround.RequireNonNull(db)
 	var absolutePath string
 	absolutePath, err := filepath.Abs(path)
 	goaround.FatalIf(err)
@@ -31,6 +32,7 @@ func addDirectory(path string, db Files) {
 }
 
 func addFile(db Files) filepath.WalkFunc {
+	goaround.RequireNonNull(db)
 	return func(filePath string, info os.FileInfo, err error) error {
 		if err != nil {
 			log.Print(err)
@@ -89,6 +91,7 @@ func addFile(db Files) filepath.WalkFunc {
 }
 
 func GetSha256AndSize(path string, info os.FileInfo) (sha256sum string, size int64) {
+	goaround.RequireNonNull(info)
 	var attrName string = "user.shatag.sha256"
 	var dest []byte = make([]byte, 64) // sha256 is 64 bytes (256 bits)
 	_, err := unix.Getxattr(path, attrName, dest)

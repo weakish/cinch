@@ -10,6 +10,7 @@ import (
 )
 
 func importCsv(path string, db Files) {
+	goaround.RequireNonNull(db)
 	var file *os.File
 	file, err := os.Open(path)
 	goaround.FatalIf(err)
