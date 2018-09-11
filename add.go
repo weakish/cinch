@@ -64,7 +64,7 @@ func addFile(db Files) filepath.WalkFunc {
 					content, err := ioutil.ReadFile(checksumFile)
 					goaround.LogIf(err)
 					var split []string = strings.Split(string(content), " ")
-					sha256sum = goaround.StringAt(split, 1)
+					sha256sum = goaround.GetString(split, 1)
 					size = info.Size()
 				}
 
