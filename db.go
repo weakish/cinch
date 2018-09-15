@@ -18,7 +18,7 @@ type Files = map[string]File
 
 func loadDb(path string) (db Files) {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		db = make(map[string]File)
+		db = make(Files)
 		return db
 	} else {
 		var content []byte

@@ -7,9 +7,14 @@ import (
 
 func main() {
 	var arguments []string = os.Args[1:]
-	if len(arguments) <= 1 {
-		usage()
-		os.Exit(0)
+	if len(arguments) == 1 {
+		if command := arguments[0]; command == "migrate" {
+			var dbPath string = os.Getenv("HOME") + "/" + "cinch.json"
+			convertDb(dbPath)
+		} else {
+			usage()
+			os.Exit(0)
+		}
 	} else if len(arguments) == 2 {
 		var dbPath string = os.Getenv("HOME") + "/" + "cinch.json"
 		var db Files
@@ -26,6 +31,9 @@ func main() {
 			usage()
 			os.Exit(1)
 		}
+	} else {
+		usage()
+		os.Exit(0)
 	}
 }
 func usage() {
