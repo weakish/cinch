@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"github.com/weakish/goaround"
+	"github.com/weakish/gosugar"
 	"golang.org/x/sys/unix"
 	"hash"
 	"io"
@@ -66,14 +67,16 @@ func addFile(db Files) filepath.WalkFunc {
 				var file File
 				file, present := db[sha256sum]
 				if present {
-					if file.Paths[filePath] {
+					if file.Paths.Contains(filePath) {
 						// already checked in
 					} else {
-						file.Paths[filePath] = true
+						file.Paths.Add(filePath)
 					}
 				} else {
+					paths := gosugar.NewStringSet()
+					paths.Add(filePath)
 					db[sha256sum] = File{
-						map[string]bool{filePath: true},
+						paths,
 						size,
 					}
 				}

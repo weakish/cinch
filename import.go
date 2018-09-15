@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/csv"
 	"github.com/weakish/goaround"
+	"github.com/weakish/gosugar"
 	"io"
 	"log"
 	"os"
@@ -33,10 +34,10 @@ func importCsv(path string, db Files) {
 			var file File
 			file, present := db[sha256]
 			if present {
-				if file.Paths[path] {
+				if file.Paths.Contains(path) {
 					log.Println(path + " already checked in.")
 				} else {
-					file.Paths[path] = true
+					file.Paths.Add(path)
 				}
 			} else {
 				var size int64
@@ -45,8 +46,10 @@ func importCsv(path string, db Files) {
 					log.Println(sha256 + "," + path + ": size unrecognizable " + record[1])
 					size = 0
 				}
+				paths := gosugar.NewStringSet()
+				paths.Add(path)
 				db[sha256] = File{
-					map[string]bool{path: true},
+					paths,
 					size,
 					}
 			}

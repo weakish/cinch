@@ -3,12 +3,13 @@ package main
 import (
 	"encoding/json"
 	"github.com/weakish/goaround"
+	"github.com/weakish/gosugar"
 	"io/ioutil"
 	"os"
 )
 
 type File struct {
-	Paths map[string]bool // mimic set
+	Paths gosugar.StringSet
 	Size int64
 }
 
