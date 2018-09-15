@@ -8,13 +8,13 @@ From WordNet 3.0 (2006)
 >
 > - **noun** any undertaking that is easy to do
 
+## Dependencies
+
+Go >=1.9
+
 ## Status
 
-Ceased.
-
-Currently only `sha256.go` works.
-It reads from `stdin` and output a pointer file compatible with `git-lfs`.
-You can use it with git's filter for large files.
+WIP
 
 You may have interests in the following projects:
 
@@ -29,3 +29,5 @@ You may have interests in the following projects:
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
+
+The coding style I use: https://weakish.github.io/coding-style/go/
