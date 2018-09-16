@@ -39,4 +39,5 @@ func main() {
 func usage() {
 	fmt.Println("cinch import file.csv")
 	fmt.Println("cinch add directory")
+	fmt.Println("WARNING: the added directory MUST NOT contain the cinch executable file itself!")
 }
