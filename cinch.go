@@ -27,6 +27,12 @@ func main() {
 			db = loadDb(dbPath)
 			importCsv(arguments[1], db)
 			saveDb(db, dbPath)
+		case "debug":
+			if arguments[1] == "mode" {
+				debug()
+			} else {
+				fmt.Println("DEBUG ONLY (may cause data corruption!): cinch debug mode")
+			}
 		default:
 			usage()
 			os.Exit(1)
