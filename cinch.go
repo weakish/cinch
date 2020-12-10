@@ -29,7 +29,7 @@ func main() {
 			saveDb(db, dbPath)
 		case "debug":
 			if arguments[1] == "mode" {
-				debug()
+				debug(dbPath)
 			} else {
 				fmt.Println("DEBUG ONLY (may cause data corruption!): cinch debug mode")
 			}
