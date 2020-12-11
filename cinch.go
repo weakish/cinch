@@ -106,7 +106,7 @@ func cinch() {
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "failed to access %q: %v\n", path, err)
 			return err
-		} else if f.IsDir() && strings.HasPrefix(f.Name(), ".") {
+		} else if f.IsDir() && strings.HasPrefix(f.Name(), ".") && f.Name() != "." {
 			return filepath.SkipDir
 		} else if f.Mode().IsRegular() {
 			if strings.HasPrefix(f.Name(), ".") {
