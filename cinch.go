@@ -153,6 +153,5 @@ func main() {
 		}
 	default:
 		usage(64)
-
 	}
 }
