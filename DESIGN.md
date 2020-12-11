@@ -28,10 +28,27 @@
 
 [jsonl]: https://jsonlines.org/
 
-## Format
+## Schema
 
 One file per driver/host.
+One line per file.
+
+```go
+type fileMetaInfo struct {
+	Path   string
+	Size   int64
+	CRC32  string `json:",omitempty"`
+	MD5    string `json:",omitempty"`
+	SHA1   string `json:",omitempty"`
+	SHA256 string `json:",omitempty"`
+	SHA512 string `json:",omitempty"`
+}
+```
 
 ```jsonl
-[path, size, {"hash_algorithm": "checksum_value"}]
+{"Path":"DESIGN.md","Size":1293}
+{"Path":"LICENSE","Size":191}
+{"Path":"README.md","Size":641}
+{"Path":"cinch","Size":2576922}
+{"Path":"cinch.go","Size":4114}
 ```
