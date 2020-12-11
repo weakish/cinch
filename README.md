@@ -8,13 +8,26 @@ From WordNet 3.0 (2006)
 >
 > - **noun** any undertaking that is easy to do
 
-## Dependencies
+## Install
 
-Go >=1.9
+Compile from source:
 
-## Status
+```sh
+go get -d ./...
+go build
+```
 
-WIP
+Then move `cinch` to a directory in `$PATH`.
+
+## Usage
+
+```sh
+cinch
+```
+
+Refer to DESIGN.md and source code (`cinch.go`) for more information.
+
+## Reference
 
 You may have interests in the following projects:
 
@@ -30,4 +43,8 @@ You may have interests in the following projects:
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
 
-The coding style I use: https://weakish.github.io/coding-style/go/
+The coding style I use: https://mmap.page/coding-style/go/
+
+## License
+
+0BSD

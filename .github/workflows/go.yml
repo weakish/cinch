@@ -1,0 +1,36 @@
+name: Test against different Go versions
+
+on:
+  push:
+    branches: [ master ]
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    branches: [ master ]
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        go: [ "1.14.12", "1.15.5" ]
+    name: Test against Go ${{ matrix.go }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Get dependencies
+        run: go get -d ./...
+
+      - name: Setup go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go }}
+
+      - name: Run main
+        run: |
+          go build
+          ./cinch -h | grep -q -F 'Just run `cinch` under the directory to scan.'
+          ./cinch | grep -q -E '^{"Path":"LICENSE","Size":'
