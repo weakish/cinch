@@ -8,10 +8,6 @@ From WordNet 3.0 (2006)
 >
 > - **noun** any undertaking that is easy to do
 
-## Dependencies
-
-Go >=1.9
-
 ## Status
 
 WIP
@@ -30,4 +26,4 @@ You may have interests in the following projects:
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
 
-The coding style I use: https://weakish.github.io/coding-style/go/
+The coding style I use: https://mmap.page/coding-style/go/
