@@ -115,7 +115,7 @@ func getCheckSum(filePath string) (crc32sum, md5sum, sha1sum, sha256sum, sha512s
 }
 
 func cinch() {
-	filepath.Walk(".", func(path string, f os.FileInfo, err error) error {
+	_ = filepath.Walk(".", func(path string, f os.FileInfo, err error) error {
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "failed to access %q: %v\n", path, err)
 			return err
