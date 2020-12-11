@@ -50,29 +50,41 @@ func doesCheckSumFileExist(filePath string, ext string) bool {
 	}
 }
 
-func getCheckSumFromChecksumFile(filePath string, algorithm string) string {
-	switch ext := "." + algorithm; ext {
-	case ".crc32", ".md5", ".sha", ".sha1", ".sha256", ".sha512":
-		if checkSumFile := filePath + ext; doesCheckSumFileExist(filePath, ext) {
-			var content []byte
-			content, err := ioutil.ReadFile(checkSumFile)
-			if err == nil {
-				var split []string = strings.Split(string(content), " ")
-				if len(split) == 2 {
-					fmt.Fprintf(os.Stderr, "Invalid checksum file content: %q\n", filePath+ext)
-					return split[1]
-				} else {
-					return ""
-				}
-			} else {
-				fmt.Fprintln(os.Stderr, err)
-				return ""
-			}
+func getCheckSumFromCheckSumFile(filePath string, algorithm string) string {
+	switch ext := "." + algorithm; algorithm {
+	case "crc32", "md5", "sha256", "sha512":
+		return readCheckSumFile(filePath, ext)
+	case "sha1":
+		trySha1 := readCheckSumFile(filePath, ext)
+		if trySha1 == "" {
+			trySha := readCheckSumFile(filePath, ".sha")
+			return trySha
 		} else {
-			return ""
+			return trySha1
 		}
 	default:
 		fmt.Fprintf(os.Stderr, "Unsupported hash algorithm: %s\n", algorithm)
+		return ""
+	}
+}
+
+func readCheckSumFile(filePath string, ext string) string {
+	if checkSumFile := filePath + ext; doesCheckSumFileExist(filePath, ext) {
+		var content []byte
+		content, err := ioutil.ReadFile(checkSumFile)
+		if err == nil {
+			var split []string = strings.Split(string(content), " ")
+			if len(split) == 2 {
+				return split[1]
+			} else {
+				fmt.Fprintf(os.Stderr, "Invalid checksum file content: %q\n", checkSumFile)
+				return ""
+			}
+		} else {
+			fmt.Fprintf(os.Stderr, "failed to read %q: %v", checkSumFile, err)
+			return ""
+		}
+	} else {
 		return ""
 	}
 }
