@@ -24,7 +24,7 @@ type fileMetaInfo struct {
 func canCheckSumFileExist(filePath string, ext string) bool {
 	absolutePath, err := filepath.Abs(filePath)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "cannot resolve absoule path for %q: %v\n", filePath, err)
+		fmt.Fprintf(os.Stderr, "cannot resolve absolute path for %q: %v\n", filePath, err)
 		return false
 	} else if baseName := path.Base(filePath); len(baseName)+len(ext) > 255 {
 		// filename length limit for most file systems
