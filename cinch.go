@@ -39,8 +39,8 @@ func canCheckSumFileExist(filePath string, ext string) bool {
 
 func doesCheckSumFileExist(filePath string, ext string) bool {
 	if canCheckSumFileExist(filePath, ext) {
-		var checksumFile string = filePath + ext
-		if _, err := os.Stat(checksumFile); os.IsNotExist(err) {
+		checkSumFilePath := filePath + ext
+		if _, err := os.Stat(checkSumFilePath); os.IsNotExist(err) {
 			return false
 		} else {
 			return true
@@ -78,7 +78,7 @@ func getCheckSumFromChecksumFile(filePath string, algorithm string) string {
 }
 
 func getSha256SumFromXattr(filePath string, sha256sumFromElsewhere string) string {
-	var attrName string = "user.shatag.sha256"
+	attrName := "user.shatag.sha256"
 	var dest []byte = make([]byte, 64) // sha256 is 64 bytes (256 bits)
 	_, err := unix.Getxattr(filePath, attrName, dest)
 	if err == nil {
@@ -89,16 +89,17 @@ func getSha256SumFromXattr(filePath string, sha256sumFromElsewhere string) strin
 }
 
 func getCheckSum(filePath string) (crc32sum, md5sum, sha1sum, sha256sum, sha512sum string) {
-	crc32sum = getCheckSumFromChecksumFile(filePath, "crc32")
-	md5sum = getCheckSumFromChecksumFile(filePath, "md5")
-	sha1sum = getCheckSumFromChecksumFile(filePath, "sha1")
+	crc32sum = getCheckSumFromCheckSumFile(filePath, "crc32")
+	md5sum = getCheckSumFromCheckSumFile(filePath, "md5")
+	sha1sum = getCheckSumFromCheckSumFile(filePath, "sha1")
 
-	sha256sum = getCheckSumFromChecksumFile(filePath, "sha256")
+	sha256sum = getCheckSumFromCheckSumFile(filePath, "sha256")
+	// xattr takes priority.
 	sha256sum = getSha256SumFromXattr(filePath, sha256sum)
 
-	sha512sum = getCheckSumFromChecksumFile(filePath, "sha512")
+	sha512sum = getCheckSumFromCheckSumFile(filePath, "sha512")
 
-	return crc32sum, md5sum, sha1sum, sha256sum, sha512sum
+	return
 }
 
 func cinch() {
@@ -113,7 +114,7 @@ func cinch() {
 				return nil
 			} else {
 				switch filepath.Ext(f.Name()) {
-				case ".crc32", ".md5", ".sha", ".sha1", ".sha256", ".sha512": // checksum
+				case ".crc32", ".md5", ".sha", ".sha1", ".sha256", ".sha512": // checksum file
 					return nil
 				case ".directory": // KDE directory preferences
 					return nil
