@@ -10,7 +10,7 @@
 
 - It should not implement special wrapping commands for moving, copying, and deleting files.
 
-    Just use normal `mv`, `cp`, `rm` etc. Using special commands increases mental burden and is error prone. I tends to forget to use them sometimes.
+    Just use normal `mv`, `cp`, `rm` etc. Using special commands increases mental burden and is error prone. I tend to forget to use them sometimes.
 
 - It does not need to track the copies of files.
 
