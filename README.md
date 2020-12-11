@@ -8,9 +8,26 @@ From WordNet 3.0 (2006)
 >
 > - **noun** any undertaking that is easy to do
 
-## Status
+## Install
 
-WIP
+Compile from source:
+
+```sh
+go get -d ./...
+go build
+```
+
+Then move `cinch` to a directory in `$PATH`.
+
+## Usage
+
+```sh
+cinch
+```
+
+Refer to DESIGN.md and source code (`cinch.go`) for more information.
+
+## Reference
 
 You may have interests in the following projects:
 
@@ -27,3 +44,7 @@ You may have interests in the following projects:
 5. Create a new Pull Request
 
 The coding style I use: https://mmap.page/coding-style/go/
+
+## License
+
+0BSD
