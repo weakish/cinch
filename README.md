@@ -10,14 +10,17 @@ From WordNet 3.0 (2006)
 
 ## Install
 
-Compile from source:
+Compile from source and install to `/usr/local/bin`:
 
 ```sh
-go get -d ./...
-go build
+make
+make install
 ```
 
-Then move `cinch` to a directory in `$PATH`.
+Depending on your file system permission configuration, you may need to prefix the `make install` command with `sudo`.
+If you want to install cinch to other directory, please edit the `config.mk` file.
+The Makefile is compatible with both GNU and BSD make.
+
 
 ## Usage
 
