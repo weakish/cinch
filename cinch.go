@@ -187,6 +187,8 @@ func main() {
 		switch arguments[0] {
 		case "-h", "--help", "help":
 			usage(0)
+		case "--version", "version":
+			fmt.Println("cinch 0.1.0")
 		default:
 			usage(64)
 		}
