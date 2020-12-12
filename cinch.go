@@ -74,7 +74,7 @@ func readCheckSumFile(filePath string, ext string) string {
 		var content []byte
 		content, err := ioutil.ReadFile(checkSumFile)
 		if err == nil {
-			var split []string = strings.Split(string(content), " ")
+			split := strings.Split(string(content), " ")
 			if len(split) == 2 {
 				return split[1]
 			} else {
@@ -92,7 +92,7 @@ func readCheckSumFile(filePath string, ext string) string {
 
 func getSha256SumFromXattr(filePath string, sha256sumFromElsewhere string) string {
 	attrName := "user.shatag.sha256"
-	var dest []byte = make([]byte, 64) // sha256 is 64 bytes (256 bits)
+	dest := make([]byte, 64) // sha256 is 64 bytes (256 bits)
 	_, err := unix.Getxattr(filePath, attrName, dest)
 	if err == nil {
 		return string(dest)
@@ -179,7 +179,7 @@ func usage(exitCode int) {
 }
 
 func main() {
-	var arguments []string = os.Args[1:]
+	arguments := os.Args[1:]
 	switch argumentsLength := len(arguments); argumentsLength {
 	case 0:
 		cinch()
