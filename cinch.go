@@ -6,6 +6,7 @@ import (
 	"golang.org/x/sys/unix"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path"
 	"path/filepath"
 	"strings"
@@ -179,7 +180,7 @@ func usage(exitCode int) {
 
 func main() {
 	var arguments []string = os.Args[1:]
-	switch len(arguments) {
+	switch argumentsLength := len(arguments); argumentsLength {
 	case 0:
 		cinch()
 	case 1:
@@ -190,6 +191,15 @@ func main() {
 			usage(64)
 		}
 	default:
-		usage(64)
+		switch arguments[0] {
+		case "cp":
+			cpArgs := make([]string, argumentsLength)
+			cpArgs[0] = "--preserve=xattr"
+			cpArgs = append(cpArgs, arguments[1:argumentsLength]...)
+			cmd := exec.Command("cp", cpArgs...)
+			_ = cmd.Run()
+		default:
+			usage(64)
+		}
 	}
 }
