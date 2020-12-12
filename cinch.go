@@ -133,39 +133,39 @@ func isBackupFile(name string) bool {
 	}
 }
 
+func skip(f os.FileInfo) error {
+	if f.IsDir() {
+		return filepath.SkipDir
+	} else {
+		return nil
+	}
+}
+
 func cinch() {
 	_ = filepath.Walk(".", func(path string, f os.FileInfo, err error) error {
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "failed to access %q: %v\n", path, err)
 			return err
 		} else if isHiddenFile(f.Name()) {
-			if f.IsDir() {
-				return filepath.SkipDir
-			} else {
-				return nil
-			}
+			return skip(f)
 		} else if isBackupFile(f.Name()) {
-			if f.IsDir() {
-				return filepath.SkipDir
-			} else {
+			return skip(f)
+		} else if f.Mode().IsRegular() {
+			switch filepath.Ext(f.Name()) {
+			case ".crc32", ".md5", ".sha", ".sha1", ".sha256", ".sha512": // checksum file
+				return nil
+			case ".directory": // KDE directory preferences
+				return nil
+			default:
+				crc32sum, md5sum, sha1sum, sha256sum, sha512sum := getCheckSum(path)
+				meta := &fileMetaInfo{Path: path, Size: f.Size(), CRC32: crc32sum, MD5: md5sum, SHA1: sha1sum, SHA256: sha256sum, SHA512: sha512sum}
+				metaJson, err := json.Marshal(meta)
+				if err != nil {
+					fmt.Fprintf(os.Stderr, "failed to encode %v: %v\n", meta, err)
+				}
+				fmt.Println(string(metaJson))
 				return nil
 			}
-		} else if f.Mode().IsRegular() {
-				switch filepath.Ext(f.Name()) {
-				case ".crc32", ".md5", ".sha", ".sha1", ".sha256", ".sha512": // checksum file
-					return nil
-				case ".directory": // KDE directory preferences
-					return nil
-				default:
-					crc32sum, md5sum, sha1sum, sha256sum, sha512sum := getCheckSum(path)
-					meta := &fileMetaInfo{Path: path, Size: f.Size(), CRC32: crc32sum, MD5: md5sum, SHA1: sha1sum, SHA256: sha256sum, SHA512: sha512sum}
-					metaJson, err := json.Marshal(meta)
-					if err != nil {
-						fmt.Fprintf(os.Stderr, "failed to encode %v: %v\n", meta, err)
-					}
-					fmt.Println(string(metaJson))
-					return nil
-				}
 		} else {
 			return nil
 		}
