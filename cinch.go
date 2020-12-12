@@ -124,12 +124,27 @@ func isHiddenFile(name string) bool {
 	}
 }
 
+func isBackupFile(name string) bool {
+	switch filepath.Ext(name) {
+	case ".bkp", ".backup", ".bup", ".attic", ".borg":
+		return true
+	default:
+		return false
+	}
+}
+
 func cinch() {
 	_ = filepath.Walk(".", func(path string, f os.FileInfo, err error) error {
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "failed to access %q: %v\n", path, err)
 			return err
 		} else if isHiddenFile(f.Name()) {
+			if f.IsDir() {
+				return filepath.SkipDir
+			} else {
+				return nil
+			}
+		} else if isBackupFile(f.Name()) {
 			if f.IsDir() {
 				return filepath.SkipDir
 			} else {
