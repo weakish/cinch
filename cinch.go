@@ -114,17 +114,28 @@ func getCheckSum(filePath string) (crc32sum, md5sum, sha1sum, sha256sum, sha512s
 	return
 }
 
+func isHiddenFile(name string) bool {
+	if name == "." || name == ".." {
+		return false
+	} else if strings.HasPrefix(name, ".") {
+		return true
+	} else {
+		return false
+	}
+}
+
 func cinch() {
 	_ = filepath.Walk(".", func(path string, f os.FileInfo, err error) error {
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "failed to access %q: %v\n", path, err)
 			return err
-		} else if f.IsDir() && strings.HasPrefix(f.Name(), ".") && f.Name() != "." {
-			return filepath.SkipDir
-		} else if f.Mode().IsRegular() {
-			if strings.HasPrefix(f.Name(), ".") {
-				return nil
+		} else if isHiddenFile(f.Name()) {
+			if f.IsDir() {
+				return filepath.SkipDir
 			} else {
+				return nil
+			}
+		} else if f.Mode().IsRegular() {
 				switch filepath.Ext(f.Name()) {
 				case ".crc32", ".md5", ".sha", ".sha1", ".sha256", ".sha512": // checksum file
 					return nil
@@ -140,7 +151,6 @@ func cinch() {
 					fmt.Println(string(metaJson))
 					return nil
 				}
-			}
 		} else {
 			return nil
 		}
