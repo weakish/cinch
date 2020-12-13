@@ -49,6 +49,6 @@ type fileMetaInfo struct {
 {"Path":"DESIGN.md","Size":1293}
 {"Path":"LICENSE","Size":191}
 {"Path":"README.md","Size":641}
-{"Path":"cinch","Size":2576922}
+{"Path":"cinch","Size":2576922,"SHA256":"78d6590ed90a43212da44acc67a907d307cc87c6fca3b056cb3de9bb30a956bb"}
 {"Path":"cinch.go","Size":4114}
 ```
