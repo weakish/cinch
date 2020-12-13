@@ -21,9 +21,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Get dependencies
-        run: go get -d ./...
-
       - name: Setup go
         uses: actions/setup-go@v2
         with:
