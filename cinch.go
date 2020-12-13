@@ -178,10 +178,6 @@ func usage(exitCode int) {
 	os.Exit(exitCode)
 }
 
-func version() string {
-	return "0.1.0"
-}
-
 func main() {
 	arguments := os.Args[1:]
 	switch argumentsLength := len(arguments); argumentsLength {
@@ -192,7 +188,8 @@ func main() {
 		case "-h", "--help", "help":
 			usage(0)
 		case "--version", "version":
-			fmt.Printf("cinch %s\n", version())
+			const version = "0.1.0"
+			fmt.Printf("cinch %s\n", version)
 		default:
 			usage(64)
 		}
