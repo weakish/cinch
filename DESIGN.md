@@ -35,13 +35,13 @@ One line per file.
 
 ```go
 type fileMetaInfo struct {
-	Path   string
-	Size   int64
-	CRC32  string `json:",omitempty"`
-	MD5    string `json:",omitempty"`
-	SHA1   string `json:",omitempty"`
-	SHA256 string `json:",omitempty"`
-	SHA512 string `json:",omitempty"`
+  Path   string
+  Size   int64
+  CRC32  string `json:",omitempty"`
+  MD5    string `json:",omitempty"`
+  SHA1   string `json:",omitempty"`
+  SHA256 string `json:",omitempty"`
+  SHA512 string `json:",omitempty"`
 }
 ```
 
