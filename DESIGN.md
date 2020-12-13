@@ -14,7 +14,7 @@
 
 - It does not need to track the copies of files.
 
-    * Just keep one copy.
+    * Just keep one copy. As a good side effect, `mv` preserves xattr, while `cp` does not by default.
     
     * If the files need to be backed up, backup the whole directory together with backup tools like `borg` or Time Machine.
 
