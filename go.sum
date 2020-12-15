@@ -1,2 +1,6 @@
+github.com/weakish/goaround v0.1.0 h1:IZ6x8cdVohR4EQ8gm5wjMFjLj0N4PYVt8OcJMTZECAE=
+github.com/weakish/goaround v0.1.0/go.mod h1:CJ36zFfnNKHdmHA7XYOOertHB8zE9F/OQnhbFvIlX94=
+github.com/weakish/gosugar v0.2.0 h1:twNE9eEMTkPrAYuzf3yyydh2/TPs97upHXJwYCIi4Jk=
+github.com/weakish/gosugar v0.2.0/go.mod h1:AOraJUDpLnFP+3lft0LYhn8jkUWDSg7cDHcyRMXFo/o=
 golang.org/x/sys v0.0.0-20201211090839-8ad439b19e0f h1:QdHQnPce6K4XQewki9WNbG5KOROuDzqO3NaYjI1cXJ0=
 golang.org/x/sys v0.0.0-20201211090839-8ad439b19e0f/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=

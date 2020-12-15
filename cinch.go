@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/weakish/gosugar"
 	"golang.org/x/sys/unix"
 	"io/ioutil"
 	"os"
@@ -115,16 +116,6 @@ func getCheckSum(filePath string) (crc32sum, md5sum, sha1sum, sha256sum, sha512s
 	return
 }
 
-func isHiddenFile(name string) bool {
-	if name == "." || name == ".." {
-		return false
-	} else if strings.HasPrefix(name, ".") {
-		return true
-	} else {
-		return false
-	}
-}
-
 func isBackupFile(name string) bool {
 	switch filepath.Ext(name) {
 	case ".bkp", ".backup", ".bup", ".attic", ".borg":
@@ -147,7 +138,7 @@ func cinch() {
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "failed to access %q: %v\n", path, err)
 			return err
-		} else if isHiddenFile(f.Name()) {
+		} else if gosugar.IsUnixHiddenFile(f.Name()) {
 			return skip(f)
 		} else if isBackupFile(f.Name()) {
 			return skip(f)
