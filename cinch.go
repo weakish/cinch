@@ -125,23 +125,15 @@ func isBackupFile(name string) bool {
 	}
 }
 
-func skip(f os.FileInfo) error {
-	if f.IsDir() {
-		return filepath.SkipDir
-	} else {
-		return nil
-	}
-}
-
 func cinch() {
 	_ = filepath.Walk(".", func(path string, f os.FileInfo, err error) error {
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "failed to access %q: %v\n", path, err)
 			return err
 		} else if gosugar.IsUnixHiddenFile(f.Name()) {
-			return skip(f)
+			return gosugar.SkipDirOrFile(f)
 		} else if isBackupFile(f.Name()) {
-			return skip(f)
+			return gosugar.SkipDirOrFile(f)
 		} else if f.Mode().IsRegular() {
 			switch filepath.Ext(f.Name()) {
 			case ".crc32", ".md5", ".sha", ".sha1", ".sha256", ".sha512": // checksum file
