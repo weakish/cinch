@@ -75,7 +75,7 @@ func readCheckSumFile(filePath string, ext string) string {
 		var content []byte
 		content, err := ioutil.ReadFile(checkSumFile)
 		if err == nil {
-			split := strings.Split(string(content), " ")
+			split := strings.Fields(string(content))
 			if len(split) == 2 {
 				return split[1]
 			} else {
@@ -157,7 +157,7 @@ func cinch() {
 }
 
 func usage(exitCode int) {
-	fmt.Println("Just run `cinch` under the directory to scan.")
+	_, _ = os.Stderr.WriteString("Just run `cinch` under the directory to scan.\n")
 	os.Exit(exitCode)
 }
 
