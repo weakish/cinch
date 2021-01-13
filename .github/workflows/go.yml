@@ -29,7 +29,7 @@ jobs:
       - name: Run main
         run: |
           go build
-          ./cinch 2>&1 >/dev/null | grep -q -F 'Just run `cinch` under the directory to scan.'
+          ./cinch -h 2>&1 >/dev/null | grep -q -F 'Just run `cinch` under the directory to scan.'
           ./cinch > out.jsonl
           grep -q -E '^{"Path":"LICENSE","Size":' out.jsonl
           ! grep -q -E '^{"Path":"\.' out.jsonl
